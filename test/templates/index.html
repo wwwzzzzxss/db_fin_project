@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>项目</title>
+</head>
+<body>
+    <h1>项目</h1>
+    <ul>
+        {% for item in items %}
+        <li>{{ item.id }} - {{ item.total }} - {{ item.customer_id}}</li>
+        {% endfor %}
+    </ul>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script>
+        var socket = io();
+        socket.on('connect', function() {
+            console.log('Connected to server');
+        });
+        socket.on('connect_error', function(error) {
+            console.error('Failed to connect to server:', error);
+        });
+        socket.on('connect_timeout', function(timeout) {
+            console.error('Connection timeout:', timeout);
+        });
+    </script>
+</body>
+</html>

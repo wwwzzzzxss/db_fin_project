@@ -1,0 +1,16 @@
+index.php 點餐頁面
+detail.php 個人資訊
+place-order.php 結帳頁面
+confir-order.php 確認訂單
+orders.php 訂單頁面
+tickets.php 回報問題
+
+
+
+detail中的密碼與之前相符才能修改密碼
+database存放"我要的"relation schema
+
+哪裡有bug:瘋狂輸入可以輸入的地方
+
+
+我需要改哪裡
