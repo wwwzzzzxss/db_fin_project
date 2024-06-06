@@ -1,6 +1,3 @@
-
-ALTER TABLE employees
-ADD COLUMN Script VARCHAR(50);
-
-ALTER TABLE employees
-ADD COLUMN Type VARCHAR(5);
+INSERT INTO items (it_id, name, price, deleted, type) 
+VALUES 
+        (10,'Pork Rice', 20.25, 0, '');

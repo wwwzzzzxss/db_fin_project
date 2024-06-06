@@ -1,0 +1,35 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    min-height: 300vh; /* 確保頁面最小高度為視窗高度 */
+}
+.tab-menu {
+    display: flex;
+    justify-content: space-around;
+    background-color: #f8f8f8;
+    padding: 10px 0;
+    border-bottom: 2px solid #ccc;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+.tab-menu div {
+    padding: 10px 20px;
+    cursor: pointer;
+}
+.tab-menu div.active {
+    border-bottom: 2px solid black;
+    font-weight: bold;
+}
+.menu-section {
+    padding: 20px;
+}
+.menu-item {
+    margin-bottom: 20px;
+}
+.placeholder {
+    height: 500px; /* 佔位符的高度，可以根據需要調整 */
+    background-color: #e0e0e0;
+    margin-bottom: 20px;
+}
