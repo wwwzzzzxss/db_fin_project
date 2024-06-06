@@ -21,6 +21,7 @@ $verified = $row['verified'];
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="msapplication-tap-highlight" content="no">
   <title>Provide Order Details</title>
+  <script src="js/updateDays.js"></script>
 
   <!-- Favicons-->
   <link rel="icon" href="images/favicon/favicon-32x32.png" sizes="32x32">
@@ -84,7 +85,9 @@ $verified = $row['verified'];
   </style>
 </head>
 
+
 <body>
+  <?php include 'aside.php'; ?>
   <!-- Start Page Loading -->
   <div id="loader-wrapper">
       <div id="loader"></div>        
@@ -92,11 +95,12 @@ $verified = $row['verified'];
       <div class="loader-section section-right"></div>
   </div>
   <!-- End Page Loading -->
-
+ 
   <!-- //////////////////////////////////////////////////////////////////////////// -->
 
   <!-- START HEADER -->
   <header id="header" class="page-topbar">
+
         <!-- start header nav-->
         <div class="navbar-fixed">
             <nav class="navbar-color">
@@ -114,81 +118,13 @@ $verified = $row['verified'];
         <!-- end header nav-->
   </header>
   <!-- END HEADER -->
-
+  
   <!-- //////////////////////////////////////////////////////////////////////////// -->
 
   <!-- START MAIN -->
   <div id="main">
     <!-- START WRAPPER -->
     <div class="wrapper">
-
-      <!-- START LEFT SIDEBAR NAV-->
-      <aside id="left-sidebar-nav">
-        <ul id="slide-out" class="side-nav fixed leftside-navigation">
-            <li class="user-details cyan darken-2">
-            <div class="row">
-                <div class="col col s4 m4 l4">
-                    <img src="images/avatar.jpg" alt="" class="circle responsive-img valign profile-image">
-                </div>
-				<div class="col col s8 m8 l8">
-                    <ul id="profile-dropdown" class="dropdown-content">
-                        <li><a href="routers/logout.php"><i class="mdi-hardware-keyboard-tab"></i> Logout</a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="col col s8 m8 l8">
-                    <a class="btn-flat dropdown-button waves-effect waves-light white-text profile-btn" href="#" data-activates="profile-dropdown"><?php echo $name;?> <i class="mdi-navigation-arrow-drop-down right"></i></a>
-                    <p class="user-roal"><?php echo $role;?></p>
-                </div>
-            </div>
-            </li>
-            <li class="bold"><a href="index.php" class="waves-effect waves-cyan"><i class="mdi-editor-border-color"></i> Order Food</a>
-            </li>
-                <li class="no-padding">
-                    <ul class="collapsible collapsible-accordion">
-                        <li class="bold"><a class="collapsible-header waves-effect waves-cyan"><i class="mdi-editor-insert-invitation"></i> Orders</a>
-                            <div class="collapsible-body">
-                                <ul>
-								<li><a href="orders.php">All Orders</a>
-                                </li>
-								<?php
-									$sql = mysqli_query($con, "SELECT DISTINCT status FROM orders WHERE customer_id = $user_id;");
-									while($row = mysqli_fetch_array($sql)){
-                                    echo '<li><a href="orders.php?status='.$row['status'].'">'.$row['status'].'</a>
-                                    </li>';
-									}
-									?>
-                                </ul>
-                            </div>
-                        </li>
-                    </ul>
-                </li>
-                <li class="no-padding">
-                    <ul class="collapsible collapsible-accordion">
-                        <li class="bold"><a class="collapsible-header waves-effect waves-cyan"><i class="mdi-action-question-answer"></i> Tickets</a>
-                            <div class="collapsible-body">
-                                <ul>
-								<li><a href="tickets.php">All Tickets</a>
-                                </li>
-								<?php
-									$sql = mysqli_query($con, "SELECT DISTINCT status FROM tickets WHERE poster_id = $user_id AND not deleted;");
-									while($row = mysqli_fetch_array($sql)){
-                                    echo '<li><a href="tickets.php?status='.$row['status'].'">'.$row['status'].'</a>
-                                    </li>';
-									}
-									?>
-                                </ul>
-                            </div>
-                        </li>
-                    </ul>
-                </li>				
-            <li class="bold"><a href="details.php" class="waves-effect waves-cyan"><i class="mdi-social-person"></i> Edit Details</a>
-            </li>				
-        </ul>
-        <a href="#" data-activates="slide-out" class="sidebar-collapse btn-floating btn-medium waves-effect waves-light hide-on-large-only cyan"><i class="mdi-navigation-menu"></i></a>
-        </aside>
-      <!-- END LEFT SIDEBAR NAV-->
-
       <!-- //////////////////////////////////////////////////////////////////////////// -->
 
       <!-- START CONTENT -->
@@ -207,76 +143,112 @@ $verified = $row['verified'];
         <!--breadcrumbs end-->
 
 
-        <!--start container-->
-				<div class="container">
-          <p class="caption">Provide required delivery and payment details.</p>
-          <div class="divider"></div>
-            <div class="row">
-              <div class="col s12 m4 l3">
-                <h4 class="header">Details</h4>
+<div class="container">
+  <div class="row">
+        <div class="row">
+          <form class="formValidate col s12 m12 l6" id="formValidate" method="post" action="confirm-order.php" novalidate="novalidate">
+          <div>
+      <div class="card-panel">
+        <div class="form-group">
+          <!-- 月份選擇 -->
+          <label for="month">選擇月份：</label>
+          <select id="month" name="month">
+            <?php
+            for ($m = 1; $m <= 12; $m++) {
+              $month = str_pad($m, 2, '0', STR_PAD_LEFT);
+              echo "<option value=\"$month\">{$m}月</option>";
+            }
+            ?>
+          </select>
+
+          <!-- 日期選擇 -->
+          <div class="row">
+            <label for="day">選擇日期：</label>
+            <select id="day" name="day">
+              <!-- 日期選項將由JavaScript動態生成 -->
+            </select>
+          </div>
+
+          <!-- 小時選擇 -->
+          <label for="hour">選擇小時：</label>
+          <select id="hour" name="hour">
+            <?php
+            for ($h = 0; $h <= 23; $h++) {
+              $hour = str_pad($h, 2, '0', STR_PAD_LEFT);
+              echo "<option value=\"$hour\">$hour</option>";
+            }
+            ?>
+          </select>
+
+          <!-- 分鐘選擇，每15分鐘 -->
+          <label for="minute">選擇分鐘：</label>
+          <select id="minute" name="minute">
+            <?php
+            for ($m = 0; $m < 60; $m += 15) {
+              $minute = str_pad($m, 2, '0', STR_PAD_LEFT);
+              echo "<option value=\"$minute\">$minute</option>";
+            }
+            ?>
+          </select>
+        </div>
+          
+          <div class="row">
+              <div class="input-field col s12">
+                <label for="payment_type">Payment Type</label>
+                <select id="payment_type" name="payment_type">
+                  <option value="Wallet" selected>Wallet</option>
+                  <option value="Cash On Delivery" <?php if (!$verified) echo 'disabled'; ?>>Cash on Delivery</option>
+                </select>
               </div>
-<div>
-                <div class="card-panel">
-                  <div class="row">
-                    <form class="formValidate col s12 m12 l6" id="formValidate" method="post" action="confirm-order.php" novalidate="novalidate">
-                      <div class="row">
-                        <div class="input-field col s12">
-							<label for="payment_type">Payment Type</label><br><br>
-							<select id="payment_type" name="payment_type">
-									<option value="Wallet" selected>Wallet</option>
-									<option value="Cash On Delivery" <?php if(!$verified) echo 'disabled';?>>Cash on Delivery</option>							
-							</select>
-                        </div>
-                      </div>					
-                      <div class="row">
-                        <div class="input-field col s12">
-                          <i class="mdi-action-home prefix"></i>
-							<textarea name="address" id="address" class="materialize-textarea validate" data-error=".errorTxt1"><?php echo $address;?></textarea>
-							<label for="address" class="">Address</label>
-							<div class="errorTxt1"></div>
-                        </div>
-                      </div>
-                      <div class="row">
-                        <div class="input-field col s12">
-                          <i class="mdi-action-credit-card prefix"></i>
-							<input name="cc_number" id="cc_number" type="text" data-error=".errorTxt2" required>
-							<label for="cc_number" class="">Card Number</label>
-							<div class="errorTxt2"></div>
-                        </div>
-                      </div>
-                      <div class="row">
-                        <div class="input-field col s12">
-                          <i class="mdi-communication-vpn-key prefix"></i>	
-							<input name="cvv_number" id="cvv_number" type="text" data-error=".errorTxt3" required>
-							<label for="cvv_number" class="">CVV Number</label>								
-							<div class="errorTxt3"></div>
-                        </div>
-                      </div>					  
-                      <div class="row">
-                        <div class="row">
-                          <div class="input-field col s12">
-                            <button class="btn cyan waves-effect waves-light right" type="submit" name="action">Submit
-                              <i class="mdi-content-send right"></i>
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-					  <?php
-					  	foreach ($_POST as $key => $value)
-						{
-							if($key == 'action' || $value == ''){
-								break;
-							}
-							echo '<input name="'.$key.'" type="hidden" value="'.$value.'">';
-						}
-					  ?>
-                    </form>
-                  </div>
+            </div>
+            <div class="row">
+              <div class="input-field col s12">
+                <i class="mdi-action-home prefix"></i>
+                <textarea name="address" id="address" class="materialize-textarea validate" data-error=".errorTxt1"><?php echo $address; ?></textarea>
+                <label for="address" class="">Address</label>
+                <div class="errorTxt1"></div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="input-field col s12">
+                <i class="mdi-action-credit-card prefix"></i>
+                <input name="cc_number" id="cc_number" type="text" data-error=".errorTxt2" required>
+                <label for="cc_number" class="">Card Number</label>
+                <div class="errorTxt2"></div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="input-field col s12">
+                <i class="mdi-communication-vpn-key prefix"></i>
+                <input name="cvv_number" id="cvv_number" type="text" data-error=".errorTxt3" required>
+                <label for="cvv_number" class="">CVV Number</label>
+                <div class="errorTxt3"></div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="row">
+                <div class="input-field col s12">
+                  <button class="btn cyan waves-effect waves-light right" type="submit" name="action">Submit
+                    <i class="mdi-content-send right"></i>
+                  </button>
                 </div>
               </div>
-            <div class="divider"></div>
-            
-          </div>
+            </div>
+            <?php
+            foreach ($_POST as $key => $value) {
+              if ($key == 'action' || $value == '') {
+                break;
+              }
+              echo '<input name="' . $key . '" type="hidden" value="' . $value . '">';
+            }
+            ?>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="divider"></div>
+  </div>
+</div>
         <!--end container-->
 
       </div>
@@ -302,12 +274,12 @@ $verified = $row['verified'];
 			break;
 		}
 		if(is_numeric($key)){
-		$result = mysqli_query($con, "SELECT * FROM items WHERE id = $key");
+		$result = mysqli_query($con, "SELECT * FROM items WHERE it_id = $key");
 		while($row = mysqli_fetch_array($result))
 		{
 			$price = $row['price'];
 			$item_name = $row['name'];
-			$item_id = $row['id'];
+			$item_id = $row['it_id'];
 		}
 			$price = $value*$price;
 			    echo '<li class="collection-item">
@@ -384,6 +356,7 @@ $verified = $row['verified'];
     
     <!-- jQuery Library -->
     <script type="text/javascript" src="js/plugins/jquery-1.11.2.min.js"></script>    
+    
     <!--angularjs-->
     <script type="text/javascript" src="js/plugins/angular.min.js"></script>
     <!--materialize js-->

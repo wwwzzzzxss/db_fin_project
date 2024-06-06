@@ -6,13 +6,22 @@ $address = htmlspecialchars($_POST['address']);
 $description =  htmlspecialchars($_POST['description']);
 $payment_type = $_POST['payment_type'];
 $total = $_POST['total'];
+$orderTime = $_POST['ordertime'];
+$sql = "INSERT INTO time (order_id, order_time) VALUES (2,'$orderTime')";
+if ($con->query($sql) === TRUE) {
+    echo "New record created successfully";
+} else {
+    echo "Error: " . $sql . "<br>" . $conn->error;
+}
+
+
 	$sql = "INSERT INTO orders (customer_id, payment_type, address, total, description) VALUES ($user_id, '$payment_type', '$address', $total, '$description')";
 	if ($con->query($sql) === TRUE){
 		$order_id =  $con->insert_id;
 		foreach ($_POST as $key => $value)
 		{
 			if(is_numeric($key)){
-			$result = mysqli_query($con, "SELECT * FROM items WHERE id = $key");
+			$result = mysqli_query($con, "SELECT * FROM items WHERE it_id = $key");
 			while($row = mysqli_fetch_array($result))
 			{
 				$price = $row['price'];

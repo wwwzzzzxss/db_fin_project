@@ -11,22 +11,12 @@ $email = $row['email'];
 $username = $row['username'];
 }
 
-// 在這裡添加代碼來驗證當前密碼並更新詳細信息
-$current_password = $_POST['current_password'];
-
 // 從數據庫中獲取用戶的當前密碼
 $user_id = $_SESSION['user_id'];
 $result = mysqli_query($con, "SELECT password FROM users WHERE id = $user_id");
 $row = mysqli_fetch_array($result);
 $stored_password = $row['password'];
 
-// 驗證輸入的當前密碼是否與存儲的密碼匹配
-if(password_verify($current_password, $stored_password)) {
-    // 繼續更新詳細信息
-    // 在這裡添加更新詳細信息的代碼
-} else {
-    // 顯示錯誤消息，指示當前密碼不正確
-}
 	if($_SESSION['customer_sid']==session_id())
 	{
 		?>
@@ -49,56 +39,65 @@ if(password_verify($current_password, $stored_password)) {
   <meta name="msapplication-TileImage" content="images/favicon/mstile-144x144.png">
   <!-- For Windows Phone -->
 
-
   <!-- CORE CSS-->
   <link href="css/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection">
   <link href="css/style.min.css" type="text/css" rel="stylesheet" media="screen,projection">
-  <!-- Custome CSS-->    
+  <!-- Custom CSS-->    
   <link href="css/custom/custom.min.css" type="text/css" rel="stylesheet" media="screen,projection">
-
+  
   <!-- INCLUDED PLUGIN CSS ON THIS PAGE -->
   <link href="js/plugins/perfect-scrollbar/perfect-scrollbar.css" type="text/css" rel="stylesheet" media="screen,projection">
-   <style type="text/css">
-  .input-field div.error{
-    position: relative;
-    top: -1rem;
-    left: 0rem;
-    font-size: 0.8rem;
-    color:#FF4081;
-    -webkit-transform: translateY(0%);
-    -ms-transform: translateY(0%);
-    -o-transform: translateY(0%);
-    transform: translateY(0%);
-  }
-  .input-field label.active{
-      width:100%;
-  }
-  .left-alert input[type=text] + label:after, 
-  .left-alert input[type=password] + label:after, 
-  .left-alert input[type=email] + label:after, 
-  .left-alert input[type=url] + label:after, 
-  .left-alert input[type=time] + label:after,
-  .left-alert input[type=date] + label:after, 
-  .left-alert input[type=datetime-local] + label:after, 
-  .left-alert input[type=tel] + label:after, 
-  .left-alert input[type=number] + label:after, 
-  .left-alert input[type=search] + label:after, 
-  .left-alert textarea.materialize-textarea + label:after{
-      left:0px;
-  }
-  .right-alert input[type=text] + label:after, 
-  .right-alert input[type=password] + label:after, 
-  .right-alert input[type=email] + label:after, 
-  .right-alert input[type=url] + label:after, 
-  .right-alert input[type=time] + label:after,
-  .right-alert input[type=date] + label:after, 
-  .right-alert input[type=datetime-local] + label:after, 
-  .right-alert input[type=tel] + label:after, 
-  .right-alert input[type=number] + label:after, 
-  .right-alert input[type=search] + label:after, 
-  .right-alert textarea.materialize-textarea + label:after{
-      right:70px;
-  }
+
+  <!-- 自定義側邊欄寬度和主內容區域的左側邊距 -->
+  <style type="text/css">
+    .side-nav.fixed {
+        width: 250px; /* 調整側邊欄寬度為300px，您可以根據需要調整 */
+    }
+
+    .main-content {
+        margin-left: 300px; /* 設置主內容區域的左側邊距，稍大於側邊欄寬度 */
+    }
+
+    .input-field div.error{
+      position: relative;
+      top: -1rem;
+      left: 0rem;
+      font-size: 0.8rem;
+      color:#FF4081;
+      -webkit-transform: translateY(0%);
+      -ms-transform: translateY(0%);
+      -o-transform: translateY(0%);
+      transform: translateY(0%);
+    }
+    .input-field label.active{
+        width:100%;
+    }
+    .left-alert input[type=text] + label:after, 
+    .left-alert input[type=password] + label:after, 
+    .left-alert input[type=email] + label:after, 
+    .left-alert input[type=url] + label:after, 
+    .left-alert input[type=time] + label:after,
+    .left-alert input[type=date] + label:after, 
+    .left-alert input[type=datetime-local] + label:after, 
+    .left-alert input[type=tel] + label:after, 
+    .left-alert input[type=number] + label:after, 
+    .left-alert input[type=search] + label:after, 
+    .left-alert textarea.materialize-textarea + label:after{
+        left:0px;
+    }
+    .right-alert input[type=text] + label:after, 
+    .right-alert input[type=password] + label:after, 
+    .right-alert input[type=email] + label:after, 
+    .right-alert input[type=url] + label:after, 
+    .right-alert input[type=time] + label:after,
+    .right-alert input[type=date] + label:after, 
+    .right-alert input[type=datetime-local] + label:after, 
+    .right-alert input[type=tel] + label:after, 
+    .right-alert input[type=number] + label:after, 
+    .right-alert input[type=search] + label:after, 
+    .right-alert textarea.materialize-textarea + label:after{
+        right:70px;
+    }
   </style> 
 </head>
 
@@ -137,70 +136,7 @@ if(password_verify($current_password, $stored_password)) {
     <div class="wrapper">
 
       <!-- START LEFT SIDEBAR NAV-->
-      <aside id="left-sidebar-nav">
-        <ul id="slide-out" class="side-nav fixed leftside-navigation">
-            <li class="user-details cyan darken-2">
-            <div class="row">
-                <div class="col col s4 m4 l4">
-                    <img src="images/avatar.jpg" alt="" class="circle responsive-img valign profile-image">
-                </div>
-				 <div class="col col s8 m8 l8">
-                    <ul id="profile-dropdown" class="dropdown-content">
-                        <li><a href="routers/logout.php"><i class="mdi-hardware-keyboard-tab"></i> Logout</a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="col col s8 m8 l8">
-                    <a class="btn-flat dropdown-button waves-effect waves-light white-text profile-btn" href="#" data-activates="profile-dropdown"><?php echo $name;?> <i class="mdi-navigation-arrow-drop-down right"></i></a>
-                    <p class="user-roal"><?php echo $role;?></p>
-                </div>
-            </div>
-            </li>
-            <li class="bold"><a href="index.php" class="waves-effect waves-cyan"><i class="mdi-editor-border-color"></i> Order Food</a>
-            </li>
-                <li class="no-padding">
-                    <ul class="collapsible collapsible-accordion">
-                        <li class="bold"><a class="collapsible-header waves-effect waves-cyan"><i class="mdi-editor-insert-invitation"></i> Orders</a>
-                            <div class="collapsible-body">
-                                <ul>
-								<li><a href="orders.php">All Orders</a>
-                                </li>
-								<?php
-									$sql = mysqli_query($con, "SELECT DISTINCT status FROM orders WHERE customer_id = $user_id;");
-									while($row = mysqli_fetch_array($sql)){
-                                    echo '<li><a href="orders.php?status='.$row['status'].'">'.$row['status'].'</a>
-                                    </li>';
-									}
-									?>
-                                </ul>
-                            </div>
-                        </li>
-                    </ul>
-                </li>
-                <li class="no-padding">
-                    <ul class="collapsible collapsible-accordion">
-                        <li class="bold"><a class="collapsible-header waves-effect waves-cyan"><i class="mdi-action-question-answer"></i> Tickets</a>
-                            <div class="collapsible-body">
-                                <ul>
-								<li><a href="tickets.php">All Tickets</a>
-                                </li>
-								<?php
-									$sql = mysqli_query($con, "SELECT DISTINCT status FROM tickets WHERE poster_id = $user_id AND not deleted;");
-									while($row = mysqli_fetch_array($sql)){
-                                    echo '<li><a href="tickets.php?status='.$row['status'].'">'.$row['status'].'</a>
-                                    </li>';
-									}
-									?>
-                                </ul>
-                            </div>
-                        </li>
-                    </ul>
-                </li>			
-            <li class="bold active"><a href="details.php" class="waves-effect waves-cyan"><i class="mdi-social-person"></i> Edit Details</a>
-            </li>			
-        </ul>
-        <a href="#" data-activates="slide-out" class="sidebar-collapse btn-floating btn-medium waves-effect waves-light hide-on-large-only cyan"><i class="mdi-navigation-menu"></i></a>
-        </aside>
+      <?php include 'aside.php'; ?>
       <!-- END LEFT SIDEBAR NAV-->
 
       <!-- //////////////////////////////////////////////////////////////////////////// -->
@@ -213,7 +149,7 @@ if(password_verify($current_password, $stored_password)) {
           <div class="container">
             <div class="row">
               <div class="col s12 m12 l12">
-                <h5 class="breadcrumbs-title">User Details</h5>
+                <h5 class="breadcrumbs-title">個人資料</h5>
               </div>
             </div>
           </div>
@@ -223,68 +159,56 @@ if(password_verify($current_password, $stored_password)) {
 
         <!--start container-->
         <div class="container">
-          <p class="caption">Edit your details here which are required for delivery and contact.</p>
-          <div class="divider"></div>
-            <div class="row">
-              <div class="col s12 m4 l3">
-                <h4 class="header">Details</h4>
-              </div>
-<div>
+        <div class="divider"></div>
+        <div class="row">
+            
+            <div class="col s12">
                 <div class="card-panel">
-                  <div class="row">
-                    <form class="formValidate" id="formValidate" method="post" action="routers/details-router.php" novalidate="novalidate"class="col s12">
-                      <div class="row">
-                        <div class="input-field col s12">
-                          <i class="mdi-action-account-circle prefix"></i>
-                          <input name="username" id="username" type="text" value="<?php echo $username;?>" data-error=".errorTxt1" disabled>
-                          <label for="username" class="">Username</label>
-						  <div class="errorTxt1"></div>
-                        </div>
-                      </div>					
-                      <div class="row">
-                        <div class="input-field col s12">
-                          <i class="mdi-action-account-circle prefix"></i>
-                          <input name="name" id="name" type="text" value="<?php echo $name;?>" data-error=".errorTxt2">
-                          <label for="name" class="">Name</label>
-						   <div class="errorTxt2"></div>
-                        </div>
-                      </div>
-                      <div class="row">
-                        <div class="input-field col s12">
-                          <i class="mdi-communication-email prefix"></i>
-                          <input name="email" id="email" type="email" value="<?php echo $email;?>" data-error=".errorTxt3">
-                          <label for="email" class="">Email</label>
-						  <div class="errorTxt3"></div>
-                        </div>
-                      </div>
-                      <div class="row">
-                        <div class="input-field col s12">
-                          <i class="mdi-action-lock-outline prefix"></i>
-                          <input name="password" id="password" type="password" data-error=".errorTxt4">
-                          <label for="password" class="">Password</label>
-						  <div class="errorTxt4"></div>
-                        </div>
-                      </div>
-    
-                  </div>
-                      <div class="row">
-                        <div class="input-field col s12">
-                          <i class="mdi-action-account-circle prefix"></i>
-                          <input name="phone" id="phone" type="number" value="<?php echo $contact;?>" data-error=".errorTxt5">
-                          <label for="phone" class="">Contact</label>
-						  <div class="errorTxt5"></div>
-                        </div>
-                      </div>					  
-                      <div class="row">
-                        <div class="input-field col s12">
-                          <i class="mdi-action-home prefix"></i>
-                          <textarea name="address" id="address" class="materialize-textarea validate" data-error=".errorTxt6"><?php echo $address;?></textarea>
-                          <label for="address" class="">Address</label>
+                    <div class="row">
+                        <form class="formValidate" id="formValidate" method="post" action="routers/details-router.php" novalidate="novalidate" class="col s12">
+                            <div class="row">
+                                <div class="input-field col s12">
+                                    <i class="mdi-action-account-circle prefix"></i>
+                                    <input name="username" id="username" type="text" value="<?php echo $username; ?>" data-error=".errorTxt1" readonly>
+                                    <label for="username" class="">Username</label>
+                                    <div class="errorTxt1"></div>
+                                </div>
+                            </div>    
+                            <div class="row">
+                                <div class="input-field col s12">
+                                    <i class="mdi-communication-email prefix"></i>
+                                    <input name="email" id="email" type="email" value="<?php echo $email; ?>" data-error=".errorTxt3" readonly>
+                                    <label for="email" class="">Email</label>
+                                    <div class="errorTxt3"></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="input-field col s12">
+                                    <i class="mdi-action-account-circle prefix"></i>
+                                    <input name="phone" id="phone" type="number" value="<?php echo $contact; ?>" data-error=".errorTxt5" readonly>
+                                    <label for="phone" class="">Contact</label>
+                                    <div class="errorTxt5"></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="input-field col s12">
+                                    <i class="mdi-action-home prefix"></i>
+                                    <textarea name="address" id="address" class="materialize-textarea validate" data-error=".errorTxt6" readonly><?php echo $address; ?></textarea>
+                                    <label for="address" class="">Address</label>
+                                    <div class="errorTxt6"></div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 						  <div class="errorTxt6"></div>
                         </div>
                         <div class="row">
                           <div class="input-field col s12">
-                            <button class="btn cyan waves-effect waves-light right" type="submit" name="action">Submit
+                            <button class="btn cyan waves-effect waves-light right" type="submit" name="action" >Submit
                               <i class="mdi-content-send right"></i>
                             </button>
                           </div>
@@ -315,8 +239,6 @@ if(password_verify($current_password, $stored_password)) {
   <footer class="page-footer">
     <div class="footer-copyright">
       <div class="container">
-        <span>Copyright © 2017 <a class="grey-text text-lighten-4" href="#" target="_blank">Students</a> All rights reserved.</span>
-        <span class="right"> Design and Developed by <a class="grey-text text-lighten-4" href="#">Students</a></span>
         </div>
     </div>
   </footer>
