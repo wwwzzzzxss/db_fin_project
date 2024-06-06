@@ -1,0 +1,6 @@
+
+ALTER TABLE employees
+ADD COLUMN Script VARCHAR(50);
+
+ALTER TABLE employees
+ADD COLUMN Type VARCHAR(5);

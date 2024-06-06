@@ -1,6 +1,7 @@
 <?php
 include 'includes/connect.php';
 include 'includes/wallet.php';
+// 設定時區，確保顯示的時間是正確的
 
 	if($_SESSION['customer_sid']==session_id())
 	{
@@ -9,6 +10,7 @@ include 'includes/wallet.php';
 <html lang="en">
 
 <head>
+  <link rel="stylesheet" href="test.css">
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -75,10 +77,32 @@ include 'includes/wallet.php';
   .right-alert textarea.materialize-textarea + label:after{
       right:70px;
   }
+  
+  .side-nav {
+      transition: transform 0.3s ease-in-out;
+  }
+  .side-nav.collapsed {
+      transform: translateX(-100%);
+  }
+
   </style> 
+
 </head>
 
 <body>
+  <?php
+    // 設定時區，確保顯示的時間是正確的
+    date_default_timezone_set('Asia/Taipei');
+
+    // 獲取當前時間的小時
+    $currentHour = date('H');
+
+    // 判斷當前時間是否超過20:00
+    /*if($currentHour > 20){
+      echo '<img src="close.png" alt="Image that fills the webpage" id="full-image">';
+      exit;
+      }*/
+  ?>
   <!-- Start Page Loading -->
   <div id="loader-wrapper">
       <div id="loader"></div>        
@@ -112,76 +136,7 @@ include 'includes/wallet.php';
   <!-- //////////////////////////////////////////////////////////////////////////// -->
 
   <!-- START MAIN -->
-  
-
-      <!-- START LEFT SIDEBAR NAV-->
-      <aside id="left-sidebar-nav">
-        <ul id="slide-out" class="side-nav fixed leftside-navigation">
-            <li class="user-details cyan darken-2">
-            <div class="row">
-                <div class="col col s4 m4 l4">
-                    <img src="images/avatar.jpg" alt="" class="circle responsive-img valign profile-image">
-                </div>
-				 <div class="col col s8 m8 l8">
-                    <ul id="profile-dropdown" class="dropdown-content">
-                        <li><a href="routers/logout.php"><i class="mdi-hardware-keyboard-tab"></i> Logout</a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="col col s8 m8 l8">
-                    <a class="btn-flat dropdown-button waves-effect waves-light white-text profile-btn" href="#" data-activates="profile-dropdown"><?php echo $name;?> <i class="mdi-navigation-arrow-drop-down right"></i></a>
-                    <p class="user-roal"><?php echo $role;?></p>
-                </div>
-            </div>
-            </li>
-            <li class="bold active"><a href="index.php" class="waves-effect waves-cyan"><i class="mdi-editor-border-color"></i> Order Food</a>
-            </li>
-                <li class="no-padding">
-                    <ul class="collapsible collapsible-accordion">
-                        <li class="bold"><a class="collapsible-header waves-effect waves-cyan"><i class="mdi-editor-insert-invitation"></i> Orders</a>
-                            <div class="collapsible-body">
-                                <ul>
-								<li><a href="orders.php">All Orders</a>
-                                </li>
-								<?php
-									$sql = mysqli_query($con, "SELECT DISTINCT status FROM orders WHERE customer_id = $user_id;");
-									while($row = mysqli_fetch_array($sql)){
-                                    echo '<li><a href="orders.php?status='.$row['status'].'">'.$row['status'].'</a>
-                                    </li>';
-									}
-									?>
-                                </ul>
-                            </div>
-                        </li>
-                    </ul>
-                </li>
-                <li class="no-padding">
-                    <ul class="collapsible collapsible-accordion">
-                        <li class="bold"><a class="collapsible-header waves-effect waves-cyan"><i class="mdi-action-question-answer"></i> Tickets</a>
-                            <div class="collapsible-body">
-                                <ul>
-								<li><a href="tickets.php">All Tickets</a>
-                                </li>
-								<?php
-									$sql = mysqli_query($con, "SELECT DISTINCT status FROM tickets WHERE poster_id = $user_id AND not deleted;");
-									while($row = mysqli_fetch_array($sql)){
-                                    echo '<li><a href="tickets.php?status='.$row['status'].'">'.$row['status'].'</a>
-                                    </li>';
-									}
-									?>
-                                </ul>
-                            </div>
-                        </li>
-                    </ul>
-                </li>					
-            <li class="bold"><a href="details.php" class="waves-effect waves-cyan"><i class="mdi-social-person"></i> Edit Details</a>
-            </li>	
-            <li class="bold"><a href="password_change.php" class="waves-effect waves-cyan"><i class="mdi-social-person"></i> change password</a>
-            </li>			
-        </ul>
-        <a href="#" data-activates="slide-out" class="sidebar-collapse btn-floating btn-medium waves-effect waves-light hide-on-large-only cyan"><i class="mdi-navigation-menu"></i></a>
-        </aside>
-        
+  <?php include 'aside.php'; ?>
       <!-- END LEFT SIDEBAR NAV-->
 
       <!-- //////////////////////////////////////////////////////////////////////////// -->

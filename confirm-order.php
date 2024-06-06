@@ -3,6 +3,7 @@ include 'includes/connect.php';
 include 'includes/wallet.php';
 $continue=0;
 $total = 0;
+echo "{$_POST['day']}";
 if($_SESSION['customer_sid']==session_id())
 {
 		if($_POST['payment_type'] == 'Wallet'){
@@ -206,12 +207,12 @@ if($continue){
 	foreach ($_POST as $key => $value)
 	{
 		if(is_numeric($key)){		
-		$result = mysqli_query($con, "SELECT * FROM items WHERE id = $key");
+		$result = mysqli_query($con, "SELECT * FROM items WHERE it_id = $key");
 		while($row = mysqli_fetch_array($result))
 		{
 			$price = $row['price'];
 			$item_name = $row['name'];
-			$item_id = $row['id'];
+			$item_id = $row['it_id'];
 		}
 			$price = $value*$price;
 			    echo '<li class="collection-item">
@@ -270,6 +271,21 @@ foreach ($_POST as $key => $value)
 ?>
 <input type="hidden" name="payment_type" value="<?php echo $_POST['payment_type'];?>">
 <input type="hidden" name="address" value="<?php echo htmlspecialchars($_POST['address']);?>">
+<input type="hidden" name="day" value="<?php echo htmlspecialchars($_POST['day']);?>">
+<input type="hidden" name="month" value="<?php echo htmlspecialchars($_POST['month']);?>">
+
+<?php 
+$year = strval(date('Y'));
+$month = isset($_POST['month']) ? str_pad(intval($_POST['month']), 2, '0', STR_PAD_LEFT) : '00';
+$day = isset($_POST['day']) ? str_pad(intval($_POST['day']), 2, '0', STR_PAD_LEFT) : '00';
+$hour = isset($_POST['hour']) ? str_pad(intval($_POST['hour']), 2, '0', STR_PAD_LEFT) : '00';
+$minute = isset($_POST['minute']) ? str_pad(intval($_POST['minute']), 2, '0', STR_PAD_LEFT) : '00';
+$orderTime = $year . '-' . $month . '-' . $day . ' ' . $hour . ':' . $minute;
+ 
+echo $orderTime; // 輸出格式為 "MMDDHHMM"
+?>
+<input type="hidden" name="ordertime" value="<?php echo $orderTime; ?>">
+
 <?php if (isset($_POST['description'])) { echo'<input type="hidden" name="description" value="'.htmlspecialchars($_POST['description']).'">';}?>
 <?php if($_POST['payment_type'] == 'Wallet') echo '<input type="hidden" name="balance" value="<?php echo ($balance-$total);?>">'; ?>
 <input type="hidden" name="total" value="<?php echo $total;?>">
