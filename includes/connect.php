@@ -2,7 +2,7 @@
 session_start();
 $servername = "localhost";
 $server_user = "root";
-$server_pass = "qwe123zxcnmq";
+$server_pass = "123";
 $dbname = "food1";
 $name = $_SESSION['name'];
 $role = $_SESSION['role'];
