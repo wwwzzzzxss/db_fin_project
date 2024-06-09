@@ -3,31 +3,35 @@ include 'includes/connect.php';
 include 'includes/wallet.php';
 $continue=0;
 $total = 0;
-echo "{$_POST['day']}";
+$contact = $_POST['contact'];
+
 if($_SESSION['customer_sid']==session_id())
 {
+    /* 確認卡號是否正確 */
 		if($_POST['payment_type'] == 'Wallet'){
 		$_POST['cc_number'] = str_replace('-', '', $_POST['cc_number']);
 		$_POST['cc_number'] = str_replace(' ', '', $_POST['cc_number']); 
 		$_POST['cvv_number'] = (int)str_replace('-', '', $_POST['cvv_number']);
-		$sql1 = mysqli_query($con, "SELECT * FROM wallet_details where wallet_id = $wallet_id");
-		while($row1 = mysqli_fetch_array($sql1)){
+		$sql1 = mysqli_query($con, "SELECT * FROM wallet_details where customer_id = $user_id");
+        while($row1 = mysqli_fetch_array($sql1)){
 			$card = $row1['number'];
 			$cvv = $row1['cvv'];
 			if($card == $_POST['cc_number'] && $cvv==$_POST['cvv_number'])
-			$continue=1;
-			else
-				header("location:index.php");
+			    $continue=1;
+			else{
+                header('Location: index.php?error=invalid_card');
+                exit();
+            }
 		}
 		}
 		else
 			$continue=1;
+            
 }
 
 $result = mysqli_query($con, "SELECT * FROM users where id = $user_id");
 while($row = mysqli_fetch_array($result)){
 	$name = $row['name'];
-	$contact = $row['contact'];
 }
 
 if($continue){
@@ -201,36 +205,81 @@ if($continue){
         <p><strong>Name:</strong>'.$name.'</p>
 		<p><strong>Contact Number:</strong> '.$contact.'</p>
 		<p><strong>Address:</strong> '.htmlspecialchars($_POST['address']).'</p>	
-		<p><strong>Payment Type:</strong> '.$_POST['payment_type'].'</p>			
+		<p><strong>Payment Type:</strong> '.$_POST['payment_type'].'</p>
+        <p><strong>Note:</strong> '.$_POST['description'].'</p>
+        		
         <a href="#" class="secondary-content"><i class="mdi-action-grade"></i></a>';
 		
-	foreach ($_POST as $key => $value)
-	{
-		if(is_numeric($key)){		
-		$result = mysqli_query($con, "SELECT * FROM items WHERE it_id = $key");
-		while($row = mysqli_fetch_array($result))
-		{
-			$price = $row['price'];
-			$item_name = $row['name'];
-			$item_id = $row['it_id'];
-		}
-			$price = $value*$price;
-			    echo '<li class="collection-item">
-        <div class="row">
-            <div class="col s7">
-                <p class="collections-title"><strong>#'.$item_id.' </strong>'.$item_name.'</p>
-            </div>
-            <div class="col s2">
-                <span>'.$value.' Pieces</span>
-            </div>
-            <div class="col s3">
-                <span>Rs. '.$price.'</span>
-            </div>
-        </div>
-    </li>';
-		$total = $total + $price;
-	}
-	}
+
+        foreach ($_POST['items'] as $key => $value) {        
+            // 确保 $value 是数组且包含 'quantity' 键
+            if (!isset($value['quantity']) || $value['quantity'] == 0) {
+                continue; // 如果没有数量，跳过该项而不是中断整个循环
+            }
+            $quantity = $value['quantity'];
+            $sweet = isset($value['sweet']) ? $value['sweet'] : '';
+            $ice = isset($value['ice']) ? $value['ice'] : '';    
+       }
+
+       $total = 0; // 初始化 total
+       foreach ($_POST['items'] as $key => $value) {
+         
+         
+         // 确保 $value 是数组且包含 'quantity' 键
+         if (!isset($value['quantity']) || $value['quantity'] == 0) {
+             continue; // 如果没有数量，跳过该项而不是中断整个循环
+         }
+         
+
+         $quantity = $value['quantity'];
+         $sweet = isset($value['sweet']) ? $value['sweet'] : '';
+         $ice = isset($value['ice']) ? $value['ice'] : '';
+ 
+
+         echo '<input type="hidden" name="items[' . $key . '][quantity]" id="item' . $key . '" value="' . $quantity . '">';
+         echo '<input type="hidden" name="items[' . $key . '][ice]" id="item' . $key . '" value="' . $ice . '">';
+         echo '<input type="hidden" name="items[' . $key . '][sweet]" id="item' . $key . '" value="' . $sweet . '">';
+         
+       
+         // 检查 $quantity 是否为数字
+         if (is_numeric($quantity)) {
+             $result = mysqli_query($con, "SELECT * FROM items WHERE it_id = $key");
+     
+             // 处理查询结果
+             while ($row = mysqli_fetch_array($result)) {
+                 $price = $row['price'];
+                 $item_name = $row['name'];
+                 $item_id = $row['it_id'];
+             }
+             // 计算价格
+             $price = $quantity * $price;
+             echo '<li class="collection-item">
+                     <div class="row">
+                         <div class="col s7">
+                             <p class="collections-title"><strong>#' . $item_id . ' </strong>' . $item_name . '</p>
+                         </div>
+                         <div class="col s2">
+                             <span>' . $quantity . ' 件</span>
+                         </div>
+                         <div class="col s3">
+                             <span>Rs. ' . $price . '</span>
+                         </div>';
+     
+             if (!empty($sweet)) {
+                 echo '<div class="col s4"><span>甜度:'. $sweet . '</span></div>';
+             }
+     
+             if (!empty($ice)) {
+                 echo '<div class="col s5"><span>冰塊:' . $ice . '</span></div>';
+             }
+ 
+             echo '</div></li>';
+     
+             // 累加总价格
+             $total += $price;
+         }
+     }
+
     echo '<li class="collection-item">
         <div class="row">
             <div class="col s7">
@@ -244,8 +293,7 @@ if($continue){
             </div>
         </div>
     </li>';
-	if(!empty($_POST['description']))
-		echo '<li class="collection-item avatar"><p><strong>Note: </strong>'.htmlspecialchars($_POST['description']).'</p></li>';
+	
 	if($_POST['payment_type'] == 'Wallet')
 	echo '<div id="basic-collections" class="section">
 		<div class="row">
@@ -261,14 +309,24 @@ if($continue){
 	</div>';
 ?>
 <form action="routers/order-router.php" method="post">
-<?php
-foreach ($_POST as $key => $value)
-{
-	if(is_numeric($key)){
-		echo '<input type="hidden" name="'.$key.'" value="'.$value.'">';
-	}
-}
-?>
+    <?php
+        foreach ($_POST['items'] as $key => $value) {        
+            // 确保 $value 是数组且包含 'quantity' 键
+            if (!isset($value['quantity']) || $value['quantity'] == 0) {
+                continue; // 如果没有数量，跳过该项而不是中断整个循环
+            }
+            $quantity = $value['quantity'];
+            $sweet = isset($value['sweet']) ? $value['sweet'] : '';
+            $ice = isset($value['ice']) ? $value['ice'] : '';
+    
+            echo '<input type="hidden" name="items[' . $key . '][quantity]" id="item' . $key . '" value="' . $quantity . '">';
+            echo '<input type="hidden" name="items[' . $key . '][ice]" id="item' . $key . '" value="' . $ice . '">';
+            echo '<input type="hidden" name="items[' . $key . '][sweet]" id="item' . $key . '" value="' . $sweet . '">';
+        }
+    ?>
+    
+<input type="hidden" name="order_type" value="<?php echo isset($_POST['order_type']) ? htmlspecialchars($_POST['order_type']) : ''; ?>">
+
 <input type="hidden" name="payment_type" value="<?php echo $_POST['payment_type'];?>">
 <input type="hidden" name="address" value="<?php echo htmlspecialchars($_POST['address']);?>">
 <input type="hidden" name="day" value="<?php echo htmlspecialchars($_POST['day']);?>">
@@ -280,10 +338,9 @@ $month = isset($_POST['month']) ? str_pad(intval($_POST['month']), 2, '0', STR_P
 $day = isset($_POST['day']) ? str_pad(intval($_POST['day']), 2, '0', STR_PAD_LEFT) : '00';
 $hour = isset($_POST['hour']) ? str_pad(intval($_POST['hour']), 2, '0', STR_PAD_LEFT) : '00';
 $minute = isset($_POST['minute']) ? str_pad(intval($_POST['minute']), 2, '0', STR_PAD_LEFT) : '00';
-$orderTime = $year . '-' . $month . '-' . $day . ' ' . $hour . ':' . $minute;
- 
-echo $orderTime; // 輸出格式為 "MMDDHHMM"
+$orderTime = $year . '-' . $month . '-' . $day . ' ' . $hour . ':' . $minute . ':00'; // 确保格式为 "YYYY-MM-DD HH:MM:00"
 ?>
+
 <input type="hidden" name="ordertime" value="<?php echo $orderTime; ?>">
 
 <?php if (isset($_POST['description'])) { echo'<input type="hidden" name="description" value="'.htmlspecialchars($_POST['description']).'">';}?>
@@ -358,8 +415,6 @@ echo $orderTime; // 輸出格式為 "MMDDHHMM"
 		{
 			header("location:admin-page.php");		
 		}
-		else{
-			header("location:login.php");
-		}
+		
 	}
 ?>

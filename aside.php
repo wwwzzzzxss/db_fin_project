@@ -19,22 +19,16 @@
                 </div>
             </div>
             </li>
-            <li class="bold active"><a href="index.php" class="waves-effect waves-cyan"><i class="mdi-editor-border-color"></i>點餐</a>
-            </li>
+            
                 <li class="no-padding">
                     <ul class="collapsible collapsible-accordion">
                         <li class="bold"><a class="collapsible-header waves-effect waves-cyan"><i class="mdi-editor-insert-invitation"></i>訂單</a>
                             <div class="collapsible-body">
                                 <ul>
-								<li><a href="orders.php">所有訂單</a>
+                                <li><a href="all-orders.php?order=part">訂單(!!)</a>
                                 </li>
-								<?php
-									$sql = mysqli_query($con, "SELECT DISTINCT status FROM orders WHERE customer_id = $user_id;");
-									while($row = mysqli_fetch_array($sql)){
-                                    echo '<li><a href="orders.php?status='.$row['status'].'">'.$row['status'].'</a>
-                                    </li>';
-									}
-									?>
+								<li><a href="all-orders.php?order=all">所有訂單</a>
+                                </li>
                                 </ul>
                             </div>
                         </li>
@@ -47,12 +41,7 @@
                                 <ul>
 								<li><a href="tickets.php">所有問題</a>
                                 </li>
-								<?php
-                                    $sql = mysqli_query($con, "SELECT DISTINCT status FROM tickets WHERE poster_id = $user_id AND not deleted;");
-                                    while($row = mysqli_fetch_array($sql)){
-                                        echo '<li><a href="tickets.php?status='.$row['status'].'">回報問題</a></li>';
-                                    }
-                                ?>
+								
                                 </ul>
                             </div>
                         </li>

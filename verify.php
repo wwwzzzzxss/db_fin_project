@@ -152,35 +152,47 @@ include 'includes/wallet.php';
       <?php include 'aside.php'; ?>
     <!-- 側邊攔 -->
   <div class="container">
-    <form action="routers/change_password.php" method="post">
+    <form action="routers/show-card-num.php" method="post">
         <div class="form-group">
-            <label for="current_password">舊密碼</label>
-            <input type="password" id="current_password" name="current_password" placeholder="請輸入原始密碼" required>
+            <label for="current-password">輸入密碼</label>
+            <input type="password" id="current-password" name="current_password" placeholder="請輸入原始密碼" required>
         </div>
-        <div class="form-group">
-            <label for="new_password">新密碼</label>
-            <input type="password" id="new_password" name="new_password" placeholder="8-16字元，包含數字+大寫英文+小寫英文+特殊符號(不可含有空白、星號、單雙引號)" required>      
+        <div class="input_block">
+            <p id="verify_code">驗證碼<span></span></p>
+            <input id="validText" type="text" placeholder="請輸入驗證碼" />
+            <canvas id="auth-code"></canvas>
+            <button id="reBtn" style="left: 15px; bottom: 6px; border-style: none; border: none; outline: none; font-size: 20px; cursor: pointer;">換圖</button>
+            <span id="result" style="color: red"></span>
         </div>
-        <div class="form-group">
-            <label for="confirm_password">請再輸入一次新密碼</label>
-            <input type="password" id="confirm_password" name="confirm_password" placeholder="請再輸入一次新密碼" required>
-        </div>
-        <button type="submit" class="btn-submit">確定修改</button>
+        <button type="submit" class="btn-submit">確定修改</button>  
     </form>
+
+    <div class="input_block">
+            <p id="verify_code">cvv<span></span></p>
+            <input id="validText" type="text" value="<?php echo htmlspecialchars($_SESSION['cvv'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" readonly/>
+
+            <p id="verify_code">number<span></span></p>
+            <input id="validText" type="text" value="<?php echo htmlspecialchars($_SESSION['number'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" readonly/>
+        </div>
+
     </div>
-  
+
     <?php if (isset($_SESSION['password_message'])): ?>
-            <div style="color: red;">         
+            <div style="color: red;">
                 <?php echo htmlspecialchars($_SESSION['password_message']); ?>
                 <?php unset($_SESSION['password_message']); // 清除錯誤訊息 ?>
             </div>
         <?php endif; ?>
+    <?php
+        unset($_SESSION['cvv']);/*清除*/
+        unset($_SESSION['number']);
+    ?>
 
   <!-- //////////////////////////////////////////////////////////////////////////// -->
     <!-- ================================================
     Scripts
     ================================================ -->
-    
+    <script src="test/script.js"></script>
     <!-- jQuery Library -->
     <script type="text/javascript" src="js/plugins/jquery-1.11.2.min.js"></script>    
     <!--angularjs-->

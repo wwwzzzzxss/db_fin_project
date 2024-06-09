@@ -1,16 +1,52 @@
-index.php 點餐頁面
-detail.php 個人資訊
-place-order.php 結帳頁面
-confir-order.php 確認訂單
-orders.php 訂單頁面
-tickets.php 回報問題
+admin-page.php:新增餐點
+all-order.php:顯示所有訂單
+* all-tickets.php:顯示所有回報問題
+aside:側邊攔
+confirm-order.php:顯示確認餐點和填的資料
+details.php:顯示個人基本資料
+index.php 選擇外送或自取
+order_food.php:點餐介面
+orders.php:訂單查詢
+password_change.php:修改密碼
+place-order.php:填寫購買個人資料
+register.php註冊
+verify:驗證身分開通卡號
+worktable.php:工作時間表顯示員工
+
+做完的0607
+	菜單頁面 甜度冰塊
+	資料 read and write 改了儲存方式
+	能夠將資料給資料庫
+	以及訂單的餐點全部成功顯示
+	0607.php 點餐頁面
+	test2.php 整合餐點和側邊，讓介面完善
 
 
 
-detail中的密碼與之前相符才能修改密碼
-database存放"我要的"relation schema
+做完的0608 :
+	菜單:flexbox調整排版:
+	字體大小
+	框框
+	背景、字體、border顏色
 
-哪裡有bug:瘋狂輸入可以輸入的地方
+	時間的部分文字沒有顯示:多加一個label
+
+	資料庫砍掉重做:修復每個頁面的各種問題，問題都跟sql有關
+
+做完的0609:
+	1.確認能輸入的部分都沒有異常
+	2.訂單顯示正常
+	3.訂單可以取消功能
+	4.提示輸入不正確的地方
+	5.跳轉網頁問題要exit()
 
 
-我需要改哪裡
+
+0610要做的:
+	1.個人資料:details.php 可以修改當點subit按鈕
+	2.aside.php新增verify.php
+	3.aside.php訂單部分 顧客和員工能看到的不同 顧客只能看orders.php
+	4.將footer顯示部分刪除
+	5.確認回報問題輸入和輸出
+	6.	
+

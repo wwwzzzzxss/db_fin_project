@@ -1,6 +1,8 @@
 <?php
 include 'includes/connect.php';
 include 'includes/wallet.php';
+
+
 $total = 0;
 	if($_SESSION['customer_sid']==session_id())
 	{
@@ -8,14 +10,15 @@ $result = mysqli_query($con, "SELECT * FROM users where id = $user_id");
 while($row = mysqli_fetch_array($result)){
 $name = $row['name'];	
 $address = $row['address'];
-$contact = $row['contact'];
 $verified = $row['verified'];
 }
 		?>
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
+
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -147,11 +150,14 @@ $verified = $row['verified'];
   <div class="row">
         <div class="row">
           <form class="formValidate col s12 m12 l6" id="formValidate" method="post" action="confirm-order.php" novalidate="novalidate">
+          <input type="hidden" name="order_type" value="<?php echo isset($_POST['order_type']) ? htmlspecialchars($_POST['order_type']) : ''; ?>">
+
           <div>
       <div class="card-panel">
         <div class="form-group">
           <!-- 月份選擇 -->
           <label for="month">選擇月份：</label>
+          
           <select id="month" name="month">
             <?php
             for ($m = 1; $m <= 12; $m++) {
@@ -161,15 +167,16 @@ $verified = $row['verified'];
             ?>
           </select>
 
-          <!-- 日期選擇 -->
-          <div class="row">
+          <!-- 日期選擇 -->     
             <label for="day">選擇日期：</label>
+            <label for="hour">選擇日期：</label>
             <select id="day" name="day">
               <!-- 日期選項將由JavaScript動態生成 -->
             </select>
-          </div>
+        
 
           <!-- 小時選擇 -->
+          <label for="hour">選擇小時：</label>
           <label for="hour">選擇小時：</label>
           <select id="hour" name="hour">
             <?php
@@ -181,6 +188,7 @@ $verified = $row['verified'];
           </select>
 
           <!-- 分鐘選擇，每15分鐘 -->
+          <label for="minute">選擇分鐘：</label>
           <label for="minute">選擇分鐘：</label>
           <select id="minute" name="minute">
             <?php
@@ -194,37 +202,72 @@ $verified = $row['verified'];
           
           <div class="row">
               <div class="input-field col s12">
-                <label for="payment_type">Payment Type</label>
+               
                 <select id="payment_type" name="payment_type">
                   <option value="Wallet" selected>Wallet</option>
-                  <option value="Cash On Delivery" <?php if (!$verified) echo 'disabled'; ?>>Cash on Delivery</option>
+                  <option value="Cash On Delivery">Cash on Delivery</option>
                 </select>
               </div>
             </div>
+            <?php
+                // 获取 POST 请求中的 order_type
+                $order_type = isset($_POST['order_type']) ? $_POST['order_type'] : '';
+
+                // 根据 order_type 的值决定是否禁用 textarea
+                $shouldDisable = ($order_type == 'pickup');
+                ?>
             <div class="row">
               <div class="input-field col s12">
-                <i class="mdi-action-home prefix"></i>
-                <textarea name="address" id="address" class="materialize-textarea validate" data-error=".errorTxt1"><?php echo $address; ?></textarea>
+                <img src="images/address.png" class="prefix" alt="Description of image">
+                <input type="hidden" id="address" name="address" value="none">
+                <textarea name="address" id="address" class="materialize-textarea validate" data-error=".errorTxt1" <?php if ($shouldDisable) echo 'disabled'; ?>><?php echo $address; ?></textarea>
                 <label for="address" class="">Address</label>
                 <div class="errorTxt1"></div>
               </div>
             </div>
             <div class="row">
               <div class="input-field col s12">
-                <i class="mdi-action-credit-card prefix"></i>
-                <input name="cc_number" id="cc_number" type="text" data-error=".errorTxt2" required>
-                <label for="cc_number" class="">Card Number</label>
-                <div class="errorTxt2"></div>
+              <img src="images/edit.png" class="prefix" alt="Description of image">
+                <textarea name="description" id="description" class="materialize-textarea" ><?php echo $address; ?></textarea>
+                <label for="description" class="">note</label>        
               </div>
             </div>
             <div class="row">
               <div class="input-field col s12">
-                <i class="mdi-communication-vpn-key prefix"></i>
+                <img src="images/card.png" class="prefix" alt="Description of image">
+                <input name="cc_number" id="cc_number" type="text"  data-error=".errorTxt4" required>
+                <label for="cc_number" class="">Card Number</label>
+                <div class="errorTxt4"></div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="input-field col s12">
+              <img src="images/key.png" class="prefix" alt="Description of image">
                 <input name="cvv_number" id="cvv_number" type="text" data-error=".errorTxt3" required>
                 <label for="cvv_number" class="">CVV Number</label>
                 <div class="errorTxt3"></div>
               </div>
-            </div>
+            </div> 
+
+            
+<?php
+  $sql = mysqli_query($con, "SELECT * FROM wallet_details where customer_id = $user_id");
+  while($row1 = mysqli_fetch_array($sql)){
+  $cvv = $row1['cvv'];
+  $number = $row1['number'];
+  }
+  /*
+  unset($cvv, $number);*/
+?>
+            <div class="row">
+              <div class="input-field col s12">
+              <img src="images/phone.png" class="prefix" alt="Description of image">
+                <input name="contact" id="contact" type="text" data-error=".errorTxt5" required>
+                <label for="contact" class="">Phone</label>
+                <div class="errorTxt5"></div>
+              </div>
+            </div> 
             <div class="row">
               <div class="row">
                 <div class="input-field col s12">
@@ -234,13 +277,21 @@ $verified = $row['verified'];
                 </div>
               </div>
             </div>
+            
             <?php
-            foreach ($_POST as $key => $value) {
-              if ($key == 'action' || $value == '') {
-                break;
+            foreach ($_POST['items'] as $key => $value) {        
+                // 确保 $value 是数组且包含 'quantity' 键
+                if (!isset($value['quantity']) || $value['quantity'] == 0) {
+                    continue; // 如果没有数量，跳过该项而不是中断整个循环
+                }
+                $quantity = $value['quantity'];
+                $sweet = isset($value['sweet']) ? $value['sweet'] : '';
+                $ice = isset($value['ice']) ? $value['ice'] : '';
+        
+                echo '<input type="hidden" name="items[' . $key . '][quantity]" id="item' . $key . '" value="' . $quantity . '">';
+                echo '<input type="hidden" name="items[' . $key . '][ice]" id="item' . $key . '" value="' . $ice . '">';
+                echo '<input type="hidden" name="items[' . $key . '][sweet]" id="item' . $key . '" value="' . $sweet . '">';
               }
-              echo '<input name="' . $key . '" type="hidden" value="' . $value . '">';
-            }
             ?>
           </form>
         </div>
@@ -250,9 +301,7 @@ $verified = $row['verified'];
   </div>
 </div>
         <!--end container-->
-
       </div>
-	  
         <div class="container">
           <p class="caption">Estimated Receipt</p>
           <div class="divider"></div>
@@ -265,39 +314,68 @@ $verified = $row['verified'];
     echo '<li class="collection-item avatar">
         <i class="mdi-content-content-paste red circle"></i>
         <p><strong>Name:</strong>'.$name.'</p>
-		<p><strong>Contact Number:</strong> '.$contact.'</p>
         <a href="#" class="secondary-content"><i class="mdi-action-grade"></i></a>';
-		
-	foreach ($_POST as $key => $value)
-	{
-		if($value == ''){
-			break;
-		}
-		if(is_numeric($key)){
-		$result = mysqli_query($con, "SELECT * FROM items WHERE it_id = $key");
-		while($row = mysqli_fetch_array($result))
-		{
-			$price = $row['price'];
-			$item_name = $row['name'];
-			$item_id = $row['it_id'];
-		}
-			$price = $value*$price;
-			    echo '<li class="collection-item">
-        <div class="row">
-            <div class="col s7">
-                <p class="collections-title"><strong>#'.$item_id.' </strong>'.$item_name.'</p>
-            </div>
-            <div class="col s2">
-                <span>'.$value.' Pieces</span>
-            </div>
-            <div class="col s3">
-                <span>Rs. '.$price.'</span>
-            </div>
-        </div>
-    </li>';
-		$total = $total + $price;
-	}
-	}
+
+        $total = 0; // 初始化 total
+        foreach ($_POST['items'] as $key => $value) {
+          
+          
+          // 确保 $value 是数组且包含 'quantity' 键
+          if (!isset($value['quantity']) || $value['quantity'] == 0) {
+              continue; // 如果没有数量，跳过该项而不是中断整个循环
+          }
+          
+
+          $quantity = $value['quantity'];
+          $sweet = isset($value['sweet']) ? $value['sweet'] : '';
+          $ice = isset($value['ice']) ? $value['ice'] : '';
+  
+
+          echo '<input type="hidden" name="items[' . $key . '][quantity]" id="item' . $key . '" value="' . $quantity . '">';
+          echo '<input type="hidden" name="items[' . $key . '][ice]" id="item' . $key . '" value="' . $ice . '">';
+          echo '<input type="hidden" name="items[' . $key . '][sweet]" id="item' . $key . '" value="' . $sweet . '">';
+          
+        
+          // 检查 $quantity 是否为数字
+          if (is_numeric($quantity)) {
+              $result = mysqli_query($con, "SELECT * FROM items WHERE it_id = $key");
+      
+              // 处理查询结果
+              while ($row = mysqli_fetch_array($result)) {
+                  $price = $row['price'];
+                  $item_name = $row['name'];
+                  $item_id = $row['it_id'];
+              }
+      
+              // 计算价格
+              $price = $quantity * $price;
+              echo '<li class="collection-item">
+                      <div class="row">
+                          <div class="col s7">
+                              <p class="collections-title"><strong>#' . $item_id . ' </strong>' . $item_name . '</p>
+                          </div>
+                          <div class="col s2">
+                              <span>' . $quantity . ' 件</span>
+                          </div>
+                          <div class="col s3">
+                              <span>Rs. ' . $price . '</span>
+                          </div>';
+      
+              if (!empty($sweet)) {
+                  echo '<div class="col s4"><span>甜度:'. $sweet . '</span></div>';
+              }
+      
+              if (!empty($ice)) {
+                  echo '<div class="col s5"><span>冰塊:' . $ice . '</span></div>';
+              }
+  
+              echo '</div></li>';
+      
+              // 累加总价格
+              $total += $price;
+          }
+      }
+
     echo '<li class="collection-item">
         <div class="row">
             <div class="col s7">
@@ -337,19 +415,6 @@ $verified = $row['verified'];
 
   <!-- //////////////////////////////////////////////////////////////////////////// -->
 
-  <!-- START FOOTER -->
-  <footer class="page-footer">
-    <div class="footer-copyright">
-      <div class="container">
-        <span>Copyright © 2017 <a class="grey-text text-lighten-4" href="#" target="_blank">Students</a> All rights reserved.</span>
-        <span class="right"> Design and Developed by <a class="grey-text text-lighten-4" href="#">Students</a></span>
-        </div>
-    </div>
-  </footer>
-    <!-- END FOOTER -->
-
-
-
     <!-- ================================================
     Scripts
     ================================================ -->
@@ -370,64 +435,77 @@ $verified = $row['verified'];
     <script type="text/javascript" src="js/plugins.min.js"></script>
     <!--custom-script.js - Add your own theme custom JS-->
     <script type="text/javascript" src="js/custom-script.js"></script>
-	<script type="text/javascript">
-    $("#formValidate").validate({
-        rules: {
-            address: {
-                required: true,
-                minlength: 5
+    <script type="text/javascript">
+        $("#formValidate").validate({
+            rules: {
+                address: {
+                    required: true,
+                    minlength: 5
+                },
+                cc_number: {
+                    required: true,
+                    
+                },
+                cvv_number: {
+                    required: true,
+                    minlength: 3,
+                },
+                contact: {
+                    required: true,
+                    digits: true,
+                    minlength: 9,
+                    maxlength: 10
+                }
             },
-            cc_number: {
-                required: true,
-                minlength: 16,
+            messages: {
+                address: {
+                    required: "Enter an address",
+                    minlength: "Enter at least 5 characters"
+                },
+                cc_number: {
+                    required: "Please provide a card number",
+                    minlength: "Enter at least 16 digits",
+                },
+                cvv_number: {
+                    required: "Please provide a CVV number",
+                    minlength: "Enter at least 3 digits",
+                },
+                contact: {
+                    required: "Please provide a phone number",
+                    digits: "Please enter only digits",
+                    minlength: "Phone number must be at least 9 digits",
+                    maxlength: "Phone number cannot be more than 10 digits"
+                },
             },
-            cvv_number: {
-                required: true,
-                minlength: 3,
-			},
-		},
-        messages: {
-           address:{
-                required: "Enter a address",
-                minlength: "Enter at least 5 characters"
-            },	
-           cc_number:{
-                required: "Please provide card number",
-                minlength: "Enter at least 16 digits",
-            },	
-           cvv_number:{
-                required: "Please provide CVV number",
-                minlength: "Enter at least 3 digits",		
-            },				
-		},
-        errorElement : 'div',
-        errorPlacement: function(error, element) {
-          var placement = $(element).data('error');
-          if (placement) {
-            $(placement).append(error)
-          } else {
-            error.insertAfter(element);
-          }
-        }
-     });
-	  $('#cc_number').formatter({
-          'pattern': '{{9999}}-{{9999}}-{{9999}}-{{9999}}',
-          'persistent': true
-      });
-	  $('#cvv_number').formatter({
-          'pattern': '{{9}}-{{9}}-{{9}}',
-          'persistent': true
-      });
-		$('#payment_type').change(function() {
-		if ($(this).val() === 'Cash On Delivery') {
-		  $("#cc_number").prop('disabled', true);
-		  $("#cvv_number").prop('disabled', true);		  
-		}
-		if ($(this).val() === 'Wallet'){
-		  $("#cc_number").prop('disabled', false);
-		  $("#cvv_number").prop('disabled', false);	
-		}
-		});
+            errorElement: 'div',
+            errorPlacement: function(error, element) {
+                var placement = $(element).data('error');
+                if (placement) {
+                    $(placement).append(error);
+                } else {
+                    error.insertAfter(element);
+                }
+            }
+        });
+
+        $('#cc_number').formatter({
+            'pattern': '{{9999}}-{{9999}}-{{9999}}-{{9999}}',
+            'persistent': true
+        });
+        $('#cvv_number').formatter({
+            'pattern': '{{9}}-{{9}}-{{9}}',
+            'persistent': true
+        });
+        $('#payment_type').change(function() {
+            if ($(this).val() === 'Cash On Delivery') {
+                $("#cc_number").prop('disabled', true);
+                $("#cvv_number").prop('disabled', true);		  
+            }
+            if ($(this).val() === 'Wallet'){
+                $("#cc_number").prop('disabled', false);
+                $("#cvv_number").prop('disabled', false);	
+            }
+        });
     </script>
 </body>
 
@@ -440,8 +518,6 @@ $verified = $row['verified'];
 		{
 			header("location:admin-page.php");		
 		}
-		else{
-			header("location:login.php");
-		}
+		
 	}
 ?>

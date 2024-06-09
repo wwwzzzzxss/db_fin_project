@@ -262,6 +262,7 @@ include 'includes/connect.php';
                       <tr>
                         <th data-field="id">Name</th>
                         <th data-field="name">Item Price/Piece</th>
+                        <th data-field="name">Item Type</th>
                       </tr>
                     </thead>
 
@@ -271,7 +272,18 @@ include 'includes/connect.php';
 					echo '<input id="name" name="name" type="text" data-error=".errorTxt01"><div class="errorTxt01"></div></td>';					
 					echo '<td><div class="input-field col s12 "><label for="price" class="">Price</label>';
 					echo '<input id="price" name="price" type="text" data-error=".errorTxt02"><div class="errorTxt02"></div></td>';                   
-					echo '<td></tr>';
+          
+					echo '<td>
+                <div class="input-field col s12">
+                  <label for="type" class=""></label>
+                  <select id="type" name="type" data-error=".errorTxt02">
+                    <option value="">--</option>
+                    <option value="N">Noodle</option>
+                    <option value="D">Drink</option>
+                  </select>
+                  <div class="errorTxt02"></div>
+                </div>';
+          echo '<td></tr>';
 				?>
                     </tbody>
 </table>

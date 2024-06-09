@@ -8,13 +8,12 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $user_id = $_SESSION['user_id'];
-$current_password = $_POST['current_password'];
+$current_password = strval($_POST['current_password']);
 $new_password = $_POST['new_password'];
 $confirm_password = $_POST['confirm_password'];
 
-$result = mysqli_query($con, "SELECT password FROM users WHERE id='$user_id' AND not deleted;");
+$result = mysqli_query($con, "SELECT password FROM users WHERE id='$user_id';");
 $row = mysqli_fetch_array($result);
-
 
 $new_password = $con->real_escape_string($new_password);
 if ($current_password == $row['password']) {
@@ -26,7 +25,7 @@ if ($current_password == $row['password']) {
         $_SESSION['password_message'] = "更新成功";
     }
     else{
-        $_SESSION['password_message'] = "新密碼兩個不相符合";
+        $_SESSION['password_message'] = "新密碼舊密碼不同";
     }
 }
 else{

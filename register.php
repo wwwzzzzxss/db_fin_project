@@ -101,12 +101,7 @@ else{
         </div>
         <div class="row margin">
           <div class="input-field col s12">
-            <i class="mdi-social-person-outline prefix"></i>
-            <input name="username" id="username" type="text"  data-error=".errorTxt1">
-            <label for="username" class="center-align">Username</label>
-        <div class="row margin">
-          <div class="input-field col s12">
-            <i class="mdi-social-person-outline prefix"></i>
+            <img src="images/email.png" class="prefix" alt="Description of image">
             <input name="email" id="email" type="text"  data-error=".errorTxt1">
             <label for="email" class="center-align">email</label>
 			<div class="errorTxt1"></div>			
@@ -120,9 +115,19 @@ else{
 			<div class="errorTxt2"></div>			
           </div>
         </div>
+
         <div class="row margin">
           <div class="input-field col s12">
-            <i class="mdi-action-lock-outline prefix"></i>
+            <i class="mdi-social-person prefix"></i>
+            <input name="username" id="username" type="text" data-error=".errorTxt2">
+            <label for="username" class="center-align">Username</label>
+			<div class="errorTxt2"></div>			
+          </div>
+        </div>
+
+        <div class="row margin">
+          <div class="input-field col s12">
+            <img src="images/lock.png" class="prefix" alt="Description of image">
             <input name="password" id="password" type="password" data-error=".errorTxt3">
             <label for="password">Password</label>
 			<div class="errorTxt3"></div>			
@@ -130,12 +135,21 @@ else{
         </div>
         <div class="row margin">
           <div class="input-field col s12">
-            <i class="mdi-communication-phone prefix"></i>
+          <img src="images/phone.png" class="prefix" alt="Description of image">
             <input name="phone" id="phone" type="number" data-error=".errorTxt4">
             <label for="phone">Phone</label>
 			<div class="errorTxt4"></div>			
           </div>
-        </div>		
+        </div>	
+
+        <div class="row margin">
+          <div class="input-field col s12">
+            <img src="images/address.png" class="prefix" alt="Description of image">
+            <input name="address" id="address" type="text" data-error=".errorTxt4">
+            <label for="address">Adress</label>
+			
+        </div>	
+
         <div class="row">
           <div class="input-field col s12">
 			<a href="javascript:void(0);" onclick="document.getElementById('formValidate').submit();" class="btn waves-effect waves-light col s12">Login</a>
